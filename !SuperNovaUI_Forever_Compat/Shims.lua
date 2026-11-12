@@ -1,0 +1,2 @@
+-- WoW Forever shims. Empty on purpose: functions the game lacks will be restored here, defined only when missing,
+-- the same way Shims.lua does it for Retail.

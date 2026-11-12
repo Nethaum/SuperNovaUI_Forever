@@ -1,0 +1,10 @@
+## Interface: 16001
+## Title: |cff38bdf8!SuperNovaUI|r Forever Compat
+## Notes: Loads first on WoW Forever. Nothing in it yet.
+## Notes-enUS: Loads first on WoW Forever. Nothing in it yet.
+## Notes-ptBR: Carrega primeiro no WoW Forever. Ainda sem conteúdo.
+## Author: Nethaum
+## Version: 0.1.0
+## Group: SuperNovaUI
+
+Shims.lua

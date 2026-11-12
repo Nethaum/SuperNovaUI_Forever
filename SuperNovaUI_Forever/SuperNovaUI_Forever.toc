@@ -1,0 +1,18 @@
+## Interface: 16001
+## Title: |cff38bdf8SuperNovaUI|r Forever
+## Notes: Interface modular para o WoW Forever.
+## Notes-enUS: Modular UI tools for WoW Forever.
+## Notes-ptBR: Interface modular para o WoW Forever.
+## Author: Nethaum
+## Version: 0.1.0
+## IconTexture: Interface\AddOns\SuperNovaUI_Forever\Media\Icons\SuperNovaUI
+## SavedVariables: SuperNovaUIForeverDB
+## SavedVariablesPerCharacter: SuperNovaUIForeverCharDB
+## Group: SuperNovaUI
+
+Core\Bootstrap.lua
+Core\Console.lua
+Core\Database.lua
+Core\SlashCommands.lua
+
+Modules\Forever\Forever.lua
