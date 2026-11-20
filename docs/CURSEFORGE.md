@@ -4,6 +4,8 @@
 
 WoW Forever only (interface 16001). The Retail version is a separate addon called **SuperNovaUI**, with its own saved variables.
 
+![Options panel](https://media.forgecdn.net/attachments/2242/317/forever_011_en-us-png.png)
+
 Type `/snui` to open the options panel.
 
 ---
@@ -79,6 +81,8 @@ MIT. See `LICENSE` inside each addon folder.
 **Um painel de opções modular para o World of Warcraft: Forever e uma macro que acompanha a recarga de uma magia.** Cada função é um módulo com liga/desliga próprio, para você manter só o que quiser.
 
 Somente WoW Forever (interface 16001). A versão Retail é um addon separado, chamado **SuperNovaUI**, com configurações próprias.
+
+![Painel de opções](https://media.forgecdn.net/attachments/2242/318/forever_011_pt-br-png.png)
 
 Digite `/snui` para abrir o painel de opções.
 
