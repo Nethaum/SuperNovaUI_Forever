@@ -11,4 +11,5 @@ Same shape as the Retail addon, kept small:
 - Account options live in `SuperNovaUIForeverDB`, character options in `SuperNovaUIForeverCharDB` (different from the Retail
   addon's variables on purpose).
 - One module owns one feature; add each new file to both `.toc` files.
-- `Modules/CooldownMacro.lua` is copied from the Retail repository too (see its `docs/ARCHITECTURE.md`): do not edit it here.
+- `Modules/CooldownMacro.lua` and `Modules/Exploration.lua` are copied from the Retail repository too (see its `docs/ARCHITECTURE.md`, which also explains how modules that are useless or conflict start off): do not edit them here.
+- `Data/Exploration.lua` is generated for this client (1.60.1) by the Retail repository's `tools/gen-exploration.py`.

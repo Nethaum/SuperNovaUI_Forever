@@ -16,7 +16,8 @@ Type `/snui` to open the options panel.
 
 One window for everything SuperNovaUI Forever does:
 
-- **Modules by category** (General, Compatibility, Tools), each with its own on/off switch, a search box, and **Enable all / Disable all**.
+- **Modules by category** (General, Compatibility, Interface, Tools), each with its own on/off switch, a search box, and **Enable all / Disable all**.
+- **Modules that do not apply to you start off.** One that would be useless for you, or that duplicates an addon you already run, starts off; once you switch it yourself, your choice is kept.
 - A short **first-run question** so you start with only what you want. You can ask it again from the General page.
 - **Profile**: export your settings as text and import them on another character or computer.
 - **English and Portuguese (Brazil)**, automatic or chosen by you.
@@ -31,6 +32,14 @@ Keeps a macro of yours pointing at the right spell: while a spell is on cooldown
 - The **Fill with the druid example** button writes the racial *Sky Vision* while ready, and Cat Form plus Dash while it is on cooldown, as a starting point.
 - A macro cannot be edited during combat. The page explains a two-fixed-macros alternative for combat use.
 
+### 3. Exploration markers (module)
+
+Marks, on the world map and on the minimap, the regions of the zone you are in that you have not discovered yet. A marker is a small ring, and it disappears when you discover the region. It is off if another addon already uncovers the map for you (Leatrix Maps).
+
+- Two switches in its page: markers on the world map and markers on the minimap.
+- `/snui explore` lists in the chat the regions of the current zone that are still to discover.
+- It shares its code with the Retail addon; the regions are the ones of the WoW Forever zones.
+
 ---
 
 ## Commands
@@ -41,6 +50,7 @@ Keeps a macro of yours pointing at the right spell: while a spell is on cooldown
 | `/snui help` | List the commands in the chat |
 | `/snui status` | State of every module |
 | `/snui macro` | Open the Macro by cooldown page |
+| `/snui explore` | List the regions of this zone you have not discovered yet |
 | `/snui reload` | Reload the UI |
 
 ## Installation
@@ -67,7 +77,7 @@ No dependencies. Settings are kept in `SuperNovaUIForeverDB`.
 
 ## Credits
 
-SuperNovaUI Forever shares its panel and the Macro by cooldown module with the Retail addon.
+SuperNovaUI Forever shares its panel, the Macro by cooldown module and the Exploration markers module with the Retail addon.
 
 ## License
 
@@ -94,7 +104,8 @@ Digite `/snui` para abrir o painel de opções.
 
 Uma janela para tudo o que o SuperNovaUI Forever faz:
 
-- **Módulos por categoria** (General, Compatibility, Tools), cada um com o seu liga/desliga, uma busca e **Enable all / Disable all**.
+- **Módulos por categoria** (General, Compatibility, Interface, Tools), cada um com o seu liga/desliga, uma busca e **Enable all / Disable all**.
+- **Módulos que não se aplicam a você começam desligados.** Um que seria inútil para você, ou que repete um addon que você já usa, começa desligado; depois que você mexe no liga/desliga, a sua escolha é mantida.
 - Uma **pergunta rápida na primeira vez**, para você começar só com o que quer. Dá para ver de novo na página General.
 - **Perfil**: exporte suas configurações como texto e importe em outro personagem ou computador.
 - **Inglês e português (Brasil)**, automático ou escolhido por você.
@@ -109,6 +120,14 @@ Mantém uma macro sua apontando para a magia certa: enquanto uma magia está em 
 - O botão **Fill with the druid example** escreve a racial *Visão do Céu* enquanto pronta, e Forma de Felino mais Arremetida enquanto está em recarga, como ponto de partida.
 - Uma macro não pode ser editada em combate. A página explica uma alternativa com duas macros fixas para usar em combate.
 
+### 3. Marcadores de exploração (módulo)
+
+Marca, no mapa-múndi e no minimapa, as regiões da zona em que você está que ainda não foram descobertas. O marcador é um pequeno anel e some quando você descobre a região. Ele fica desligado se outro addon já revela o mapa para você (Leatrix Maps).
+
+- Dois liga/desliga na página dele: marcadores no mapa-múndi e marcadores no minimapa.
+- `/snui explore` lista no chat as regiões da zona atual que ainda faltam descobrir.
+- Ele divide o código com o addon Retail; as regiões são as das zonas do WoW Forever.
+
 ---
 
 ## Comandos
@@ -119,6 +138,7 @@ Mantém uma macro sua apontando para a magia certa: enquanto uma magia está em 
 | `/snui help` | Lista os comandos no chat |
 | `/snui status` | Estado de cada módulo |
 | `/snui macro` | Abre a página da Macro por recarga |
+| `/snui explore` | Lista as regiões desta zona que você ainda não descobriu |
 | `/snui reload` | Recarrega a interface |
 
 ## Instalação
@@ -145,7 +165,7 @@ Sem dependências. As configurações ficam em `SuperNovaUIForeverDB`.
 
 ## Créditos
 
-O SuperNovaUI Forever divide o painel e o módulo Macro por recarga com o addon Retail.
+O SuperNovaUI Forever divide o painel e os módulos Macro por recarga e Marcadores de exploração com o addon Retail.
 
 ## Licença
 
