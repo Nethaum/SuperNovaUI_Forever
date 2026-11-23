@@ -83,6 +83,17 @@ local function NewPin(parent, size, interactive)
     local icon = pin:CreateTexture(nil, "OVERLAY")
     icon:SetAllPoints()
     icon:SetTexture(ICON)
+
+    -- the game snaps pictures to the screen's pixel grid; the minimap slides smoothly, so a snapped marker moves in
+    -- little jumps next to it. Markers keep their sub-pixel position instead.
+    if icon.SetSnapToPixelGrid then
+        icon:SetSnapToPixelGrid(false)
+    end
+
+    if icon.SetTexelSnappingBias then
+        icon:SetTexelSnappingBias(0)
+    end
+
     pin.icon = icon
 
     if interactive then
@@ -383,6 +394,67 @@ function Convergence:OnOptionChanged()
 end
 
 -- /snui converge: how many convergences the current zone has.
+-- /snui converge jitter: for four seconds, counts how often each source of the player's position changes from one
+-- frame to the next. A source that changes in only some frames makes markers placed from it move in jumps.
+function Convergence:RunJitterTest()
+    local mapID = C_Map.GetBestMapForUnit("player")
+
+    if not mapID then
+        SN:Print("jitter test: no map for the player here.")
+        return
+    end
+
+    local frames, mapChanged, unitChanged, facingChanged = 0, 0, 0, 0
+    local dtSum, dtMax = 0, 0
+    local lastMx, lastMy, lastUx, lastUy, lastFacing
+    local started = GetTime()
+    local hasUnitPosition = UnitPosition ~= nil
+
+    SN:Print("jitter test: run in a straight line for 4 seconds...")
+
+    local watcher = CreateFrame("Frame")
+    watcher:SetScript("OnUpdate", function(_, step)
+        frames = frames + 1
+        dtSum = dtSum + step
+
+        if step > dtMax then
+            dtMax = step
+        end
+
+        local okMap, position = pcall(C_Map.GetPlayerMapPosition, mapID, "player")
+        local mx, my = okMap and position and Plain(position.x), okMap and position and Plain(position.y)
+        local ux, uy
+
+        if hasUnitPosition then
+            local okUnit, first, second = pcall(UnitPosition, "player")
+            ux, uy = okUnit and Plain(first), okUnit and Plain(second)
+        end
+
+        local facing = Plain(GetPlayerFacing and GetPlayerFacing())
+
+        if mx and (mx ~= lastMx or my ~= lastMy) then
+            mapChanged = mapChanged + 1
+        end
+
+        if ux and (ux ~= lastUx or uy ~= lastUy) then
+            unitChanged = unitChanged + 1
+        end
+
+        if facing and facing ~= lastFacing then
+            facingChanged = facingChanged + 1
+        end
+
+        lastMx, lastMy, lastUx, lastUy, lastFacing = mx, my, ux, uy, facing
+
+        if GetTime() - started >= 4 then
+            watcher:SetScript("OnUpdate", nil)
+            SN:Print(("jitter test: frames=%d (%.0f fps, longest frame %.0f ms) | changed: mapPosition=%d unitPosition=%s facing=%d")
+                :format(frames, frames / math.max(dtSum, 0.001), dtMax * 1000, mapChanged,
+                    hasUnitPosition and tostring(unitChanged) or "n/a", facingChanged))
+        end
+    end)
+end
+
 function Convergence:HandleCommand(rest)
     if not self:IsSupported() then
         SN:Print(L("convergence markers are not available in this game.", "os marcadores de convergência não estão disponíveis neste jogo."))
@@ -391,6 +463,11 @@ function Convergence:HandleCommand(rest)
 
     local mapID = C_Map.GetBestMapForUnit("player")
     local count = CountPoints(mapID and SN.ConvergenceData[mapID])
+
+    if rest == "jitter" then
+        self:RunJitterTest()
+        return
+    end
 
     if rest == "debug" then
         local map = _G.WorldMapFrame
