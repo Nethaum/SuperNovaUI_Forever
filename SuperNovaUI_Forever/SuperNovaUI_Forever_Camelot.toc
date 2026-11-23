@@ -4,9 +4,9 @@
 ## Notes-enUS: Modular UI tools for WoW Forever.
 ## Notes-ptBR: Interface modular para o WoW Forever.
 ## Author: Nethaum
-## Version: 0.1.4
+## Version: 0.1.5
 ## IconTexture: Interface\AddOns\SuperNovaUI_Forever\Media\Icons\SuperNovaUI
-## OptionalDeps: SkyborneLeyLineConvergenceMarker
+## OptionalDeps: SkyborneLeyLineConvergenceMarker, VoidGPS, Auctionator
 ## SavedVariables: SuperNovaUIForeverDB
 ## SavedVariablesPerCharacter: SuperNovaUIForeverCharDB
 ## Group: SuperNovaUI
@@ -34,3 +34,11 @@ Data\Exploration.lua
 Modules\Exploration.lua
 Data\Convergence.lua
 Modules\Forever\Convergence.lua
+Data\Recipes.lua
+Modules\Forever\GoalPlan.lua
+Modules\Forever\GoalStore.lua
+Modules\Forever\GoalGame.lua
+Modules\Forever\GoalRecipes.lua
+Modules\Forever\GoalPage.lua
+Modules\Forever\GoalReport.lua
+Modules\Forever\Goals.lua

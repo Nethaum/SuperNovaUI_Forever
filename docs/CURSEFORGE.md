@@ -49,6 +49,16 @@ Marks every elemental convergence on the world map and on the minimap with a sma
 - Only in this addon: the positions are taken from the Wowhead page of the object, 417 points in 41 zones.
 - With [Skyborne Leyline & Convergence Marker](https://www.curseforge.com/wow/addons/sllcm) (by tr0tsky) installed, this module uses that addon's list of points, which is bigger and keeps growing. As that addon draws the same markers (and shows which ones were seen just now), this module starts off next to it; you can still switch it on.
 
+### 5. Profession goal (module)
+
+Set the level you want to reach in any profession (for example Cooking 180) and, with the profession window open, a box under it says how many points are left and the cheapest way to get there. It starts off until you set a goal.
+
+- Set it in **Tools > Profession goal**: the target level (a number), or only the name of a recipe, and the level that recipe needs is found for you. Only recipes that exist in WoW Forever are accepted.
+- The cheapest way is worked out recipe by recipe, from the price of each reagent: Auction House prices when you have Auctionator or TradeSkillMaster, and vendor prices (learned when you open a vendor, or from VoidGPS if you have it). Without prices it still tells which recipes can give you points, and says the plan is incomplete.
+- `/snui goal` says how far the goal of the open profession is, and `/snui goal plan` prints the whole plan: recipes to buy, every step and the shopping list with prices.
+- It works in any game language: goals are saved per profession, not per translated name.
+- The recipe data is inside the addon; no other addon is needed.
+
 ---
 
 ## Commands
@@ -61,6 +71,8 @@ Marks every elemental convergence on the world map and on the minimap with a sma
 | `/snui macro` | Open the Macro by cooldown page |
 | `/snui explore` | List the regions of this zone you have not discovered yet |
 | `/snui converge` | How many elemental convergences this zone has |
+| `/snui goal` | How far the goal of the open profession is |
+| `/snui goal plan` | The cheapest way to the goal, with prices and what to buy |
 | `/snui reload` | Reload the UI |
 
 ## Installation
@@ -70,7 +82,7 @@ Copy **both** folders from the zip into `World of Warcraft/_forever_/Interface/A
 - `SuperNovaUI_Forever` - the addon and the panel
 - `!SuperNovaUI_Forever_Compat` - loads first; it will restore API functions the game lacks (empty for now)
 
-No dependencies. Settings are kept in `SuperNovaUIForeverDB`.
+No dependencies. Auctionator, TradeSkillMaster and VoidGPS are optional: the Profession goal module uses their prices when they are installed. Settings are kept in `SuperNovaUIForeverDB`.
 
 ## What it never does
 
@@ -87,7 +99,7 @@ No dependencies. Settings are kept in `SuperNovaUIForeverDB`.
 
 ## Credits
 
-SuperNovaUI Forever shares its panel, the Macro by cooldown module and the Exploration markers module with the Retail addon. The optional list of elemental convergences comes from Skyborne Leyline & Convergence Marker by tr0tsky (MIT).
+SuperNovaUI Forever shares its panel, the Macro by cooldown module and the Exploration markers module with the Retail addon. The optional list of elemental convergences comes from Skyborne Leyline & Convergence Marker by tr0tsky (MIT). The list of WoW Forever recipes used by the Profession goal module is built from the data of [VoidProf](https://www.curseforge.com/wow/addons/voidprof) by bughatti (MIT), and the numbers in it match the game's own tables; its notice is in `THIRD_PARTY_NOTICES.md`. VoidProf does not need to be installed.
 
 ## License
 
@@ -147,6 +159,16 @@ Marca todas as convergências elementais no mapa-múndi e no minimapa com um peq
 - Só neste addon: as posições vêm da página do objeto no Wowhead, 417 pontos em 41 zonas.
 - Com o [Skyborne Leyline & Convergence Marker](https://www.curseforge.com/wow/addons/sllcm) (de tr0tsky) instalado, este módulo usa a lista de pontos desse addon, que é maior e continua crescendo. Como esse addon desenha os mesmos marcadores (e mostra quais foram vistos agora há pouco), este módulo começa desligado junto dele; você ainda pode ligá-lo.
 
+### 5. Meta de profissão (módulo)
+
+Defina o nível que você quer alcançar em qualquer profissão (por exemplo Culinária 180) e, com a janela da profissão aberta, uma caixa embaixo dela diz quantos pontos faltam e o caminho mais barato até lá. Ele começa desligado até você definir uma meta.
+
+- Defina em **Tools > Profession goal**: o nível desejado (um número), ou só o nome de uma receita, e o nível que ela exige é descoberto para você. Só são aceitas receitas que existem no WoW Forever.
+- O caminho mais barato é calculado receita por receita, pelo preço de cada reagente: preços do leilão se você tem o Auctionator ou o TradeSkillMaster, e preços de vendedores (aprendidos quando você abre um vendedor, ou do VoidGPS se você o tem). Sem preços ele ainda diz quais receitas podem dar pontos, e avisa que o plano está incompleto.
+- `/snui goal` diz o quanto falta da meta da profissão aberta, e `/snui goal plan` mostra o plano inteiro: receitas a comprar, cada passo e a lista de compras com preços.
+- Funciona em qualquer idioma do jogo: as metas são guardadas por profissão, não pelo nome traduzido.
+- Os dados das receitas estão dentro do addon; nenhum outro addon é necessário.
+
 ---
 
 ## Comandos
@@ -159,6 +181,8 @@ Marca todas as convergências elementais no mapa-múndi e no minimapa com um peq
 | `/snui macro` | Abre a página da Macro por recarga |
 | `/snui explore` | Lista as regiões desta zona que você ainda não descobriu |
 | `/snui converge` | Quantas convergências elementais esta zona tem |
+| `/snui goal` | O quanto falta da meta da profissão aberta |
+| `/snui goal plan` | O caminho mais barato até a meta, com preços e o que comprar |
 | `/snui reload` | Recarrega a interface |
 
 ## Instalação
@@ -168,7 +192,7 @@ Copie **as duas** pastas do zip para `World of Warcraft/_forever_/Interface/AddO
 - `SuperNovaUI_Forever` - o addon e o painel
 - `!SuperNovaUI_Forever_Compat` - carrega primeiro; vai devolver funções da API que o jogo não tem (vazio por enquanto)
 
-Sem dependências. As configurações ficam em `SuperNovaUIForeverDB`.
+Sem dependências. Auctionator, TradeSkillMaster e VoidGPS são opcionais: o módulo Meta de profissão usa os preços deles quando estão instalados. As configurações ficam em `SuperNovaUIForeverDB`.
 
 ## O que ele nunca faz
 
@@ -185,7 +209,7 @@ Sem dependências. As configurações ficam em `SuperNovaUIForeverDB`.
 
 ## Créditos
 
-O SuperNovaUI Forever divide o painel e os módulos Macro por recarga e Marcadores de exploração com o addon Retail. A lista opcional de convergências elementais vem do Skyborne Leyline & Convergence Marker, de tr0tsky (MIT).
+O SuperNovaUI Forever divide o painel e os módulos Macro por recarga e Marcadores de exploração com o addon Retail. A lista opcional de convergências elementais vem do Skyborne Leyline & Convergence Marker, de tr0tsky (MIT). A lista de receitas do WoW Forever usada pelo módulo Meta de profissão é feita a partir dos dados do [VoidProf](https://www.curseforge.com/wow/addons/voidprof), de bughatti (MIT), e os números dela batem com as tabelas do próprio jogo; o aviso dele está em `THIRD_PARTY_NOTICES.md`. O VoidProf não precisa estar instalado.
 
 ## Licença
 

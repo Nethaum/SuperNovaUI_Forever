@@ -4,7 +4,7 @@
 ## Notes-enUS: Loads first on WoW Forever. Nothing in it yet.
 ## Notes-ptBR: Carrega primeiro no WoW Forever. Ainda sem conteúdo.
 ## Author: Nethaum
-## Version: 0.1.4
+## Version: 0.1.5
 ## IconTexture: Interface\AddOns\!SuperNovaUI_Forever_Compat\Media\Icons\SuperNovaUI
 ## Group: SuperNovaUI
 
