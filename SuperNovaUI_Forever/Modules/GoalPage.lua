@@ -92,7 +92,7 @@ local function ProfessionNames(module)
     for name, maxSkill in pairs(module:ReadKnownProfessions()) do
         local key = module:KeyOf(name)
 
-        if seen[key] == nil then
+        if not module:HasProfessionTiers() and seen[key] == nil then
             seen[key] = maxSkill
         end
     end
@@ -119,9 +119,12 @@ local function ShowMessage(message, text, color)
 end
 
 local function SaveFailureText(module, profession, why)
-    if why == "recipe" then
+    if why == "recipe" and module:HasRecipeData() then
         return L("No WoW Forever recipe has that name. Check the spelling (any part of the name works).",
             "Nenhuma receita do WoW Forever tem esse nome. Confira a escrita (qualquer parte do nome serve).")
+    elseif why == "recipe" then
+        return L("That recipe is not in sight. Open a vendor that sells it, or put the recipe in your bags, and try again.",
+            "Essa receita não está à vista. Abra um vendedor que a venda, ou ponha a receita nas bolsas, e tente de novo.")
     end
 
     local lowest, highest = module:GetLevelRange(profession)
@@ -214,6 +217,16 @@ local function BuildProfessionCard(module, flow, message, profession)
     BuildButtons(module, flow, message, profession, levelEdit, recipeEdit)
 end
 
+local function PageIntro(module)
+    if module:HasRecipeData() then
+        return L("Your professions show up here (if one is missing, open its window once). Type the level you want to reach, or only the recipe name and the level is found for you. The recipe name must be one of the WoW Forever recipes (type any part of its name). Leave both empty to remove the goal.",
+            "Suas profissões aparecem aqui (se faltar alguma, abra a janela dela uma vez). Digite o nível que você quer alcançar, ou só o nome da receita que o nível é descoberto para você. O nome da receita precisa ser uma das receitas do WoW Forever (digite qualquer parte do nome). Deixe os dois vazios para remover a meta.")
+    end
+
+    return L("Open the window of each profession (and of each expansion's level of it) once and it shows up here. Type the level you want to reach, or only the name of a recipe that is in a vendor window or in your bags and the level is found for you. Leave both empty to remove the goal.",
+        "Abra uma vez a janela de cada profissão (e de cada nível de expansão dela) e ela aparece aqui. Digite o nível que você quer alcançar, ou só o nome de uma receita que esteja na janela de um vendedor ou nas bolsas que o nível é descoberto para você. Deixe os dois vazios para remover a meta.")
+end
+
 -- The page: one pair of boxes (target level, recipe name) for every profession the player has opened.
 local function BuildPage(module, flow)
     local W = SN.Widgets
@@ -225,9 +238,7 @@ local function BuildPage(module, flow)
     message:SetWordWrap(true)
 
     flow:Header(L("Goals", "Metas"))
-    flow:Text(L("Your professions show up here (if one is missing, open its window once). Type the level you want to reach, or only the recipe name and the level is found for you. The recipe name must be one of the WoW Forever recipes (type any part of its name). Leave both empty to remove the goal.",
-        "Suas profissões aparecem aqui (se faltar alguma, abra a janela dela uma vez). Digite o nível que você quer alcançar, ou só o nome da receita que o nível é descoberto para você. O nome da receita precisa ser uma das receitas do WoW Forever (digite qualquer parte do nome). Deixe os dois vazios para remover a meta."),
-        W.colors.muted)
+    flow:Text(PageIntro(module), W.colors.muted)
 
     local names = ProfessionNames(module)
 

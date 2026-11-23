@@ -58,6 +58,7 @@ Set the level you want to reach in any profession (for example Cooking 180) and,
 - `/snui goal` says how far the goal of the open profession is, and `/snui goal plan` prints the whole plan: recipes to buy, every step and the shopping list with prices.
 - It works in any game language: goals are saved per profession, not per translated name.
 - The recipe data is inside the addon; no other addon is needed.
+- Also available in the Retail version of SuperNovaUI, without the cheapest-way plan.
 
 ---
 
@@ -168,6 +169,7 @@ Defina o nível que você quer alcançar em qualquer profissão (por exemplo Cul
 - `/snui goal` diz o quanto falta da meta da profissão aberta, e `/snui goal plan` mostra o plano inteiro: receitas a comprar, cada passo e a lista de compras com preços.
 - Funciona em qualquer idioma do jogo: as metas são guardadas por profissão, não pelo nome traduzido.
 - Os dados das receitas estão dentro do addon; nenhum outro addon é necessário.
+- Também existe na versão Retail do SuperNovaUI, sem o plano do caminho mais barato.
 
 ---
 

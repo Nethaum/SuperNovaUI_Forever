@@ -46,10 +46,24 @@ function Goals:FindProfessionEntry(profession)
     return ProfessionEntry(self:GetProfessions(), Normalize(profession), self:DataId(profession))
 end
 
+-- Is there recipe data inside this addon (WoW Forever only)? Without it the recipes come from the game's own windows.
+function Goals:HasRecipeData()
+    return next(self:GetProfessions()) ~= nil
+end
+
+-- The highest level of the profession: from the recipe data, else from the window the player opened (a tier of Retail has
+-- its own top), else the default.
+local function HighestLevel(module, profession)
+    local entry = module:FindProfessionEntry(profession)
+    local fromData = entry and tonumber(entry.max)
+    local fromWindow = tonumber(module:GetSeen()[module:KeyOf(profession)])
+
+    return fromData or fromWindow
+end
+
 -- The lowest and the highest level a goal for this profession can have.
 function Goals:GetLevelRange(profession)
-    local entry = self:FindProfessionEntry(profession)
-    local highest = entry and tonumber(entry.max)
+    local highest = HighestLevel(self, profession)
 
     if highest and highest >= START_LEVEL then
         return START_LEVEL, highest
@@ -230,7 +244,7 @@ function Goals:FindRecipeLevel(recipeName, profession)
         if itemName and string.find(string.lower(itemName), needle, 1, true) then
             local requiredProfession, level = ReadRequirement(link)
 
-            if self:IsValidLevel(level, requiredProfession) and (not profession or self:KeyOf(requiredProfession) == self:KeyOf(profession)) then
+            if self:IsValidLevel(level, requiredProfession) and (not profession or self:IsSameProfession(requiredProfession, profession)) then
                 return level, requiredProfession, itemName
             end
         end

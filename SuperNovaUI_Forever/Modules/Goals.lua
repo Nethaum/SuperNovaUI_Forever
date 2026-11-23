@@ -7,7 +7,7 @@ local addonName, SN = ...
     the profession window open, a small box below it says how far the goal is and what to do next, by the cheapest way.
 
     The module is made of small files, loaded in this order (see the .toc):
-      GoalPlan     the maths of the cheapest path (prices, steps); knows nothing about the game's windows
+      GoalPlan     the maths of the cheapest path (prices, steps); WoW Forever only, the one with recipe data
       GoalStore    what is saved, per profession id (never the translated name)
       GoalGame     what the game says: the open window, the professions, the recipes, the merchant
       GoalRecipes  the recipe lists, the level a recipe needs, the range a goal may have
@@ -73,11 +73,13 @@ end
 function Goals:RememberSeen(openProfession, openMaxRank)
     local seen = self:GetSeen()
 
-    for name, maxSkill in pairs(self:ReadKnownProfessions()) do
-        local key = self:KeyOf(name)
+    if not self:HasProfessionTiers() then
+        for name, maxSkill in pairs(self:ReadKnownProfessions()) do
+            local key = self:KeyOf(name)
 
-        if seen[key] == nil then
-            seen[key] = maxSkill
+            if seen[key] == nil then
+                seen[key] = maxSkill
+            end
         end
     end
 
@@ -265,7 +267,10 @@ local function PrintPlan(summary)
 
         local lines = Goals.FullPlanLines(summary.plan)
 
-        if #lines == 0 then
+        if #lines == 0 and not Goals:HasRecipeData() then
+            SN:Print(L("The cheapest-way plan is not available in this game version yet.",
+                "O plano do caminho mais barato ainda não existe nesta versão do jogo."))
+        elseif #lines == 0 then
             SN:Print(L("No recipe list knows this profession.", "Nenhuma lista de receitas conhece esta profissão."))
         end
 

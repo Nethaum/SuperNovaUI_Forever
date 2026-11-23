@@ -18,6 +18,21 @@ local TIER_NAMES = {
     easy = { enUS = "green: sometimes raises your level", ptBR = "verde: às vezes sobe o nível" },
 }
 
+-- The key of the open profession: its id from the game's skill line, and the tier when the line has a parent (the
+-- "Khaz Algar Cooking" of the Cooking line). Remembered, so the name is matched by id later.
+function Goals:RememberOpenProfession(info)
+    local parent = tonumber(info.parentProfessionID)
+    local line = parent or tonumber(info.professionID)
+    local id = line and self:IdOfLine(line)
+
+    if not id then
+        return
+    end
+
+    local tier = parent and tonumber(info.professionID)
+    self:RememberKey(info.professionName, tier and tier ~= parent and (id .. ":" .. tier) or id)
+end
+
 -- The profession window that is open: name, current skill and the highest skill this rank allows. nil when none is open.
 -- The game has two APIs for this (the classic TradeSkill functions and C_TradeSkillUI); whichever exists is used.
 function Goals:ReadProfession()
@@ -26,6 +41,7 @@ function Goals:ReadProfession()
 
         if ok and type(info) == "table" and type(info.professionName) == "string" and info.professionName ~= ""
             and type(info.skillLevel) == "number" and info.skillLevel > 0 then
+            self:RememberOpenProfession(info)
             return info.professionName, info.skillLevel, info.maxSkillLevel or info.skillLevel
         end
     end

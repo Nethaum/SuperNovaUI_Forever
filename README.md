@@ -44,7 +44,7 @@ Copy both folders to `World of Warcraft/_forever_/Interface/AddOns/`:
 - `SuperNovaUI_Forever/Modules/Forever/` - the WoW Forever page (no fixes yet).
 - `SuperNovaUI_Forever/Modules/CooldownMacro.lua` - Macro by cooldown (shared with Retail).
 - `SuperNovaUI_Forever/Modules/Exploration.lua` - Exploration markers (shared with Retail); `Data/Exploration.lua` is generated for this client.
-- `SuperNovaUI_Forever/Modules/Forever/Goal*.lua` - Profession goal (this addon only), one small file per job: `GoalStore` (saved data), `GoalGame` (what the game says), `GoalRecipes` (recipe levels), `GoalPage` (settings page), `GoalReport` (summary and texts), `Goals` (box, events, command, registration); `Data/Recipes.lua` is the recipe list, made by `tools/gen-recipes.py` from VoidProf's data; `Modules/Forever/GoalPlan.lua` is the price and plan maths.
+- `SuperNovaUI_Forever/Modules/Goal*.lua` - Profession goal (shared with the Retail addon, edited there), one small file per job: `GoalStore` (saved data), `GoalGame` (what the game says), `GoalRecipes` (recipe levels), `GoalPage` (settings page), `GoalReport` (summary and texts), `Goals` (box, events, command, registration); `Data/Recipes.lua` is the recipe list, made by `tools/gen-recipes.py` from VoidProf's data; `Modules/Forever/GoalPlan.lua` is the price and plan maths.
 - `SuperNovaUI_Forever/Modules/Forever/Convergence.lua` - Elemental Convergence markers (this addon only); `Data/Convergence.lua` holds the positions.
 - Each `.toc` exists twice (plain and `_Camelot`) because the client picks one by suffix; keep them identical.
 

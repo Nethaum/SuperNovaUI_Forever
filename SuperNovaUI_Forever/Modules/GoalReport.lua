@@ -15,10 +15,12 @@ local addonName, SN = ...
 local Goals = SN.ProfessionGoal
 local L, Clean, SpellName = Goals.L, Goals.Clean, Goals.SpellName
 local TIER_NAMES = Goals.TIER_NAMES
-local Plan = SN.GoalPlan
+local Plan = SN.GoalPlan -- only where the game has recipe data (WoW Forever)
 
-Plan.GetSeen = function()
-    return Goals:GetVendorSeen()
+if Plan then
+    Plan.GetSeen = function()
+        return Goals:GetVendorSeen()
+    end
 end
 
 -- The plan ------------------------------------------------------------------------------------------------------------
@@ -39,7 +41,7 @@ local PLAN_CACHE_SECONDS = 60
 
 -- The plan for a goal, or nil when no list knows the profession. Kept for a minute (prices move slowly, the maths is not free).
 function Goals:GetPlan(profession, skill, goal)
-    local entry = self:FindProfessionEntry(profession)
+    local entry = Plan and self:FindProfessionEntry(profession)
 
     if not entry then
         return nil
