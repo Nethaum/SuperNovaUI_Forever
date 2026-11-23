@@ -7,6 +7,11 @@ local addonName, SN = ...
     bonus. Where they are is not in the game's client tables, so SN.ConvergenceData (Data/Convergence.lua) holds the
     positions of every convergence of every zone, taken from the Wowhead page of the object.
 
+    If the addon "Skyborne Leyline & Convergence Marker" (tr0tsky, MIT) is installed, its list is used instead: it is
+    bigger, it keeps growing (it learns from the players' own finds) and it drops bad reports. It offers the list to
+    other addons through SLLCM_GetNodes. That addon draws the same markers itself, so this module starts off next to it
+    (conflictsWith); the player can still switch it on, and then it draws its markers from that list.
+
     The world map markers are small frames on the map's canvas. The minimap markers are placed from the distance to the
     player in yards, the same way the exploration markers are (see Modules/Exploration.lua), and the minimap is looked at
     every frame, and a look where nothing moved costs only a few comparisons.
@@ -18,6 +23,8 @@ local Convergence = {
     minimapPins = {},
 }
 
+local PARTNER_ADDON = "SkyborneLeyLineConvergenceMarker" -- folder of Skyborne Leyline & Convergence Marker
+local PARTNER_NAME = "Skyborne Leyline & Convergence Marker"
 local WINDSHAPER_RACE_ID = 96      -- "Windshaper Skyborne" in the game's ChrRaces table
 local SKYSIGHT_SPELL_ID = 1259686  -- the racial that benefits from a convergence
 local ICON = (SN.config.icon:gsub("SuperNovaUI$", "Convergence")) -- Media/Icons/Convergence.tga: a small wind swirl
@@ -64,6 +71,47 @@ function Convergence:GetSetting(key)
     return SN:GetOption(self.name, key)
 end
 
+-- The points of a zone as a flat list { x1, y1, x2, y2, ... }: from the partner addon when it is there and knows the
+-- zone (its list is the more complete), otherwise our own. The partner's lists are read once and kept until the next
+-- refresh, because it hands out a new table on every call.
+function Convergence:GetPartnerList()
+    if self.partner == nil then
+        self.partner = false
+
+        if type(_G.SLLCM_GetNodes) == "function" then
+            local ok, nodes = pcall(_G.SLLCM_GetNodes, "Horde")
+
+            if ok and type(nodes) == "table" then
+                local flat = {}
+
+                for mapID, list in pairs(nodes) do
+                    local points = {}
+
+                    for _, point in ipairs(list) do
+                        points[#points + 1] = point[1]
+                        points[#points + 1] = point[2]
+                    end
+
+                    if #points > 0 then
+                        flat[mapID] = points
+                    end
+                end
+
+                if next(flat) then
+                    self.partner = flat
+                end
+            end
+        end
+    end
+
+    return self.partner or nil
+end
+
+function Convergence:GetPoints(mapID)
+    local partner = self:GetPartnerList()
+    return partner and partner[mapID] or (mapID and SN.ConvergenceData and SN.ConvergenceData[mapID])
+end
+
 -- Number of points, from the flat list { x1, y1, x2, y2, ... } of a zone.
 local function CountPoints(list)
     return list and math.floor(#list / 2) or 0
@@ -105,6 +153,11 @@ local function NewPin(parent, size, interactive)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:AddLine(L("Elemental Convergence", "Convergência Elemental"), 1, 1, 1)
             GameTooltip:AddLine(L("Use Skysight next to it for the bigger bonus.", "Use a Visão do Céu perto dela para o bônus maior."), 0.6, 0.9, 0.9)
+
+            if Convergence:GetPartnerList() then
+                GameTooltip:AddLine(L("Positions: ", "Posições: ") .. PARTNER_NAME, 0.5, 0.5, 0.5)
+            end
+
             GameTooltip:Show()
         end)
         pin:SetScript("OnLeave", function()
@@ -136,7 +189,7 @@ function Convergence:UpdateWorldMap()
 
     local canvas = map.GetCanvas and map:GetCanvas()
     local mapID = map.GetMapID and map:GetMapID()
-    local list = canvas and mapID and SN.ConvergenceData[mapID]
+    local list = canvas and mapID and self:GetPoints(mapID)
 
     if not list then
         HidePins(self.worldPins)
@@ -250,7 +303,7 @@ function Convergence:UpdateMinimap()
     end
 
     local mapID = C_Map.GetBestMapForUnit("player")
-    local list = mapID and SN.ConvergenceData[mapID]
+    local list = mapID and self:GetPoints(mapID)
     local radius = GetMinimapRadius()
 
     if not list or not radius then
@@ -348,6 +401,7 @@ end
 
 function Convergence:Refresh()
     self.last = nil
+    self.partner = nil -- read the partner addon's list again (it may have learned new points)
     if self.running then
         self:HookWorldMap()
     end
@@ -393,68 +447,102 @@ function Convergence:OnOptionChanged()
     self:Refresh()
 end
 
--- /snui converge: how many convergences the current zone has.
--- /snui converge jitter: for four seconds, counts how often each source of the player's position changes from one
--- frame to the next. A source that changes in only some frames makes markers placed from it move in jumps.
-function Convergence:RunJitterTest()
-    local mapID = C_Map.GetBestMapForUnit("player")
+-- ---- Watching the "convergence nearby" signal -----------------------------------------------------------------------
+-- The game puts an effect on the player while an active convergence is close ("A powerful elemental convergence is
+-- nearby...") and "Charged" after Skysight next to one. /snui converge watch prints, whenever one of them comes or goes,
+-- how far the nearest known point is: that tells how near a point has to be for the signal, and which points are idle.
 
-    if not mapID then
-        SN:Print("jitter test: no map for the player here.")
-        return
+local NEARBY_SPELL_ID = 1271953 -- "A powerful elemental convergence is nearby..."
+local CHARGED_SPELL_ID = 1270893 -- "Charged": Skysight used next to a convergence
+
+local function HasPlayerAura(spellID)
+    if C_UnitAuras and C_UnitAuras.GetPlayerAuraBySpellID then
+        local ok, aura = pcall(C_UnitAuras.GetPlayerAuraBySpellID, spellID)
+        return ok and aura ~= nil
     end
 
-    local frames, mapChanged, unitChanged, facingChanged = 0, 0, 0, 0
-    local dtSum, dtMax = 0, 0
-    local lastMx, lastMy, lastUx, lastUy, lastFacing
-    local started = GetTime()
-    local hasUnitPosition = UnitPosition ~= nil
+    if UnitAura then
+        for index = 1, 60 do
+            local name, _, _, _, _, _, _, _, _, id = UnitAura("player", index)
 
-    SN:Print("jitter test: run in a straight line for 4 seconds...")
+            if not name then
+                break
+            end
 
-    local watcher = CreateFrame("Frame")
-    watcher:SetScript("OnUpdate", function(_, step)
-        frames = frames + 1
-        dtSum = dtSum + step
-
-        if step > dtMax then
-            dtMax = step
+            if id == spellID then
+                return true
+            end
         end
+    end
 
-        local okMap, position = pcall(C_Map.GetPlayerMapPosition, mapID, "player")
-        local mx, my = okMap and position and Plain(position.x), okMap and position and Plain(position.y)
-        local ux, uy
-
-        if hasUnitPosition then
-            local okUnit, first, second = pcall(UnitPosition, "player")
-            ux, uy = okUnit and Plain(first), okUnit and Plain(second)
-        end
-
-        local facing = Plain(GetPlayerFacing and GetPlayerFacing())
-
-        if mx and (mx ~= lastMx or my ~= lastMy) then
-            mapChanged = mapChanged + 1
-        end
-
-        if ux and (ux ~= lastUx or uy ~= lastUy) then
-            unitChanged = unitChanged + 1
-        end
-
-        if facing and facing ~= lastFacing then
-            facingChanged = facingChanged + 1
-        end
-
-        lastMx, lastMy, lastUx, lastUy, lastFacing = mx, my, ux, uy, facing
-
-        if GetTime() - started >= 4 then
-            watcher:SetScript("OnUpdate", nil)
-            SN:Print(("jitter test: frames=%d (%.0f fps, longest frame %.0f ms) | changed: mapPosition=%d unitPosition=%s facing=%d")
-                :format(frames, frames / math.max(dtSum, 0.001), dtMax * 1000, mapChanged,
-                    hasUnitPosition and tostring(unitChanged) or "n/a", facingChanged))
-        end
-    end)
+    return false
 end
 
+-- Distance in yards to the nearest known point of the zone the player is in, and that point's coordinates (0 to 100).
+function Convergence:GetNearestPoint()
+    local mapID = C_Map.GetBestMapForUnit("player")
+    local list = mapID and self:GetPoints(mapID)
+
+    if not list then
+        return nil
+    end
+
+    local okPosition, position = pcall(C_Map.GetPlayerMapPosition, mapID, "player")
+    local playerX, playerY = position and Plain(position.x), position and Plain(position.y)
+    local yardsWide, yardsHigh = GetZoneSize(mapID)
+
+    if not (okPosition and playerX and playerY and yardsWide) then
+        return nil
+    end
+
+    local best, bestX, bestY
+
+    for index = 1, CountPoints(list) do
+        local x, y = list[index * 2 - 1], list[index * 2]
+        local dx, dy = (x - playerX) * yardsWide, (y - playerY) * yardsHigh
+        local distance = math.sqrt(dx * dx + dy * dy)
+
+        if not best or distance < best then
+            best, bestX, bestY = distance, x, y
+        end
+    end
+
+    return best, bestX * 100, bestY * 100
+end
+
+function Convergence:Watch(on)
+    if not self.watcher then
+        self.watcher = CreateFrame("Frame")
+        self.watcher.nearby, self.watcher.charged = false, false
+        self.watcher:SetScript("OnEvent", function(frame)
+            local function Report(label, now, before)
+                if now == before then
+                    return
+                end
+
+                local distance, x, y = Convergence:GetNearestPoint()
+                local where = distance and ("nearest known point %.0f yards away (%.1f, %.1f)"):format(distance, x, y) or "no known point in this zone"
+                SN:Print(("watch: %s %s | %s"):format(label, now and "ON" or "OFF", where))
+            end
+
+            local nearby, charged = HasPlayerAura(NEARBY_SPELL_ID), HasPlayerAura(CHARGED_SPELL_ID)
+            Report("convergence nearby", nearby, frame.nearby)
+            Report("charged", charged, frame.charged)
+            frame.nearby, frame.charged = nearby, charged
+        end)
+    end
+
+    if on then
+        self.watcher.nearby, self.watcher.charged = HasPlayerAura(NEARBY_SPELL_ID), HasPlayerAura(CHARGED_SPELL_ID)
+        pcall(self.watcher.RegisterUnitEvent, self.watcher, "UNIT_AURA", "player")
+    else
+        pcall(self.watcher.UnregisterEvent, self.watcher, "UNIT_AURA")
+    end
+
+    self.watching = on
+end
+
+-- /snui converge: how many convergences the current zone has; watch and debug are for finding problems.
 function Convergence:HandleCommand(rest)
     if not self:IsSupported() then
         SN:Print(L("convergence markers are not available in this game.", "os marcadores de convergência não estão disponíveis neste jogo."))
@@ -462,10 +550,12 @@ function Convergence:HandleCommand(rest)
     end
 
     local mapID = C_Map.GetBestMapForUnit("player")
-    local count = CountPoints(mapID and SN.ConvergenceData[mapID])
+    local count = CountPoints(mapID and self:GetPoints(mapID))
 
-    if rest == "jitter" then
-        self:RunJitterTest()
+    if rest == "watch" then
+        self:Watch(not self.watching)
+        SN:Print(self.watching and "watch: on. Walk around the points; each time the nearby signal comes or goes, the distance is printed. Run it again to stop."
+            or "watch: off.")
         return
     end
 
@@ -518,9 +608,12 @@ Convergence.info = {
     order = 2,
     name = { enUS = "Elemental Convergence markers", ptBR = "Marcadores de Convergência Elemental" },
     desc = {
-        enUS = "Marks the elemental convergences on the world map and on the minimap, for the Skysight of the Windshaper Skyborne.",
-        ptBR = "Marca as convergências elementais no mapa-múndi e no minimapa, para a Visão do Céu dos Celonatos Moldaventos.",
+        enUS = "Marks the elemental convergences on the world map and on the minimap, for the Skysight of the Windshaper Skyborne. Uses the point list of Skyborne Leyline & Convergence Marker (tr0tsky) when that addon is installed.",
+        ptBR = "Marca as convergências elementais no mapa-múndi e no minimapa, para a Visão do Céu dos Celonatos Moldaventos. Usa a lista de pontos do Skyborne Leyline & Convergence Marker (tr0tsky) quando esse addon está instalado.",
     },
+    -- Skyborne Leyline & Convergence Marker draws the same markers (and shows which were seen just now): next to it this
+    -- module starts off, and if the player switches it on anyway it uses that addon's list of points.
+    conflictsWith = { PARTNER_ADDON },
     -- Only a Windshaper Skyborne has a use for it, so it starts off for everyone else.
     isUseful = function(module)
         return module:IsSupported() and module:IsWindshaper()
@@ -541,6 +634,10 @@ Convergence.info = {
 
         if not module:IsWindshaper() then
             return "warning", L("Meant for Windshaper Skyborne", "Feito para Celonatos Moldaventos")
+        end
+
+        if module:GetPartnerList() then
+            return "active", L("Using the point list of " .. PARTNER_NAME, "Usando a lista de pontos do " .. PARTNER_NAME)
         end
 
         return "active"

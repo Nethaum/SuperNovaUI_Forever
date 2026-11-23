@@ -47,6 +47,7 @@ Marks every elemental convergence on the world map and on the minimap with a sma
 - Two switches in its page: markers on the world map and markers on the minimap.
 - `/snui converge` tells how many convergences the current zone has.
 - Only in this addon: the positions are taken from the Wowhead page of the object, 417 points in 41 zones.
+- With [Skyborne Leyline & Convergence Marker](https://www.curseforge.com/wow/addons/sllcm) (by tr0tsky) installed, this module uses that addon's list of points, which is bigger and keeps growing. As that addon draws the same markers (and shows which ones were seen just now), this module starts off next to it; you can still switch it on.
 
 ---
 
@@ -86,7 +87,7 @@ No dependencies. Settings are kept in `SuperNovaUIForeverDB`.
 
 ## Credits
 
-SuperNovaUI Forever shares its panel, the Macro by cooldown module and the Exploration markers module with the Retail addon.
+SuperNovaUI Forever shares its panel, the Macro by cooldown module and the Exploration markers module with the Retail addon. The optional list of elemental convergences comes from Skyborne Leyline & Convergence Marker by tr0tsky (MIT).
 
 ## License
 
@@ -144,6 +145,7 @@ Marca todas as convergências elementais no mapa-múndi e no minimapa com um peq
 - Dois liga/desliga na página dele: marcadores no mapa-múndi e marcadores no minimapa.
 - `/snui converge` diz quantas convergências a zona atual tem.
 - Só neste addon: as posições vêm da página do objeto no Wowhead, 417 pontos em 41 zonas.
+- Com o [Skyborne Leyline & Convergence Marker](https://www.curseforge.com/wow/addons/sllcm) (de tr0tsky) instalado, este módulo usa a lista de pontos desse addon, que é maior e continua crescendo. Como esse addon desenha os mesmos marcadores (e mostra quais foram vistos agora há pouco), este módulo começa desligado junto dele; você ainda pode ligá-lo.
 
 ---
 
@@ -183,7 +185,7 @@ Sem dependências. As configurações ficam em `SuperNovaUIForeverDB`.
 
 ## Créditos
 
-O SuperNovaUI Forever divide o painel e os módulos Macro por recarga e Marcadores de exploração com o addon Retail.
+O SuperNovaUI Forever divide o painel e os módulos Macro por recarga e Marcadores de exploração com o addon Retail. A lista opcional de convergências elementais vem do Skyborne Leyline & Convergence Marker, de tr0tsky (MIT).
 
 ## Licença
 

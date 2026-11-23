@@ -6,6 +6,7 @@
 ## Author: Nethaum
 ## Version: 0.1.3
 ## IconTexture: Interface\AddOns\SuperNovaUI_Forever\Media\Icons\SuperNovaUI
+## OptionalDeps: SkyborneLeyLineConvergenceMarker
 ## SavedVariables: SuperNovaUIForeverDB
 ## SavedVariablesPerCharacter: SuperNovaUIForeverCharDB
 ## Group: SuperNovaUI
