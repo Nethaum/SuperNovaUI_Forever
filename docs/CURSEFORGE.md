@@ -40,6 +40,14 @@ Marks, on the world map and on the minimap, the regions of the zone you are in t
 - `/snui explore` lists in the chat the regions of the current zone that are still to discover.
 - It shares its code with the Retail addon; the regions are the ones of the WoW Forever zones.
 
+### 4. Elemental Convergence markers (module)
+
+Marks every elemental convergence on the world map and on the minimap with a small wind swirl, for the Skysight of the Windshaper Skyborne. It starts on only for that race (or anyone who knows Skysight), and off for everyone else.
+
+- Two switches in its page: markers on the world map and markers on the minimap.
+- `/snui converge` tells how many convergences the current zone has.
+- Only in this addon: the positions are taken from the Wowhead page of the object, 417 points in 41 zones.
+
 ---
 
 ## Commands
@@ -51,6 +59,7 @@ Marks, on the world map and on the minimap, the regions of the zone you are in t
 | `/snui status` | State of every module |
 | `/snui macro` | Open the Macro by cooldown page |
 | `/snui explore` | List the regions of this zone you have not discovered yet |
+| `/snui converge` | How many elemental convergences this zone has |
 | `/snui reload` | Reload the UI |
 
 ## Installation
@@ -128,6 +137,14 @@ Marca, no mapa-múndi e no minimapa, as regiões da zona em que você está que 
 - `/snui explore` lista no chat as regiões da zona atual que ainda faltam descobrir.
 - Ele divide o código com o addon Retail; as regiões são as das zonas do WoW Forever.
 
+### 4. Marcadores de Convergência Elemental (módulo)
+
+Marca todas as convergências elementais no mapa-múndi e no minimapa com um pequeno redemoinho de vento, para a Visão do Céu dos Celonatos Moldaventos. Ele começa ligado só para essa raça (ou para quem conhece a Visão do Céu) e desligado para todos os outros.
+
+- Dois liga/desliga na página dele: marcadores no mapa-múndi e marcadores no minimapa.
+- `/snui converge` diz quantas convergências a zona atual tem.
+- Só neste addon: as posições vêm da página do objeto no Wowhead, 417 pontos em 41 zonas.
+
 ---
 
 ## Comandos
@@ -139,6 +156,7 @@ Marca, no mapa-múndi e no minimapa, as regiões da zona em que você está que 
 | `/snui status` | Estado de cada módulo |
 | `/snui macro` | Abre a página da Macro por recarga |
 | `/snui explore` | Lista as regiões desta zona que você ainda não descobriu |
+| `/snui converge` | Quantas convergências elementais esta zona tem |
 | `/snui reload` | Recarrega a interface |
 
 ## Instalação

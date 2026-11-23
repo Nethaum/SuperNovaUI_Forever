@@ -4,7 +4,7 @@
 ## Notes-enUS: Modular UI tools for WoW Forever.
 ## Notes-ptBR: Interface modular para o WoW Forever.
 ## Author: Nethaum
-## Version: 0.1.2
+## Version: 0.1.3
 ## IconTexture: Interface\AddOns\SuperNovaUI_Forever\Media\Icons\SuperNovaUI
 ## SavedVariables: SuperNovaUIForeverDB
 ## SavedVariablesPerCharacter: SuperNovaUIForeverCharDB
@@ -31,3 +31,5 @@ Modules\Forever\Forever.lua
 Modules\CooldownMacro.lua
 Data\Exploration.lua
 Modules\Exploration.lua
+Data\Convergence.lua
+Modules\Forever\Convergence.lua

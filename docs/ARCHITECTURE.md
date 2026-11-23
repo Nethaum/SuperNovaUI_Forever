@@ -13,3 +13,4 @@ Same shape as the Retail addon, kept small:
 - One module owns one feature; add each new file to both `.toc` files.
 - `Modules/CooldownMacro.lua` and `Modules/Exploration.lua` are copied from the Retail repository too (see its `docs/ARCHITECTURE.md`, which also explains how modules that are useless or conflict start off): do not edit them here.
 - `Data/Exploration.lua` is generated for this client (1.60.1) by the Retail repository's `tools/gen-exploration.py`.
+- `Modules/Forever/Convergence.lua` (Elemental Convergence markers) exists only here. Its positions, `Data/Convergence.lua`, were copied from the Wowhead page of the object (616992) because the client tables do not hold them; it starts on only for a Windshaper Skyborne (race 96, or anyone who knows Skysight).
