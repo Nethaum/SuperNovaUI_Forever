@@ -9,7 +9,7 @@ local addonName, SN = ...
 
     The world map markers are small frames on the map's canvas. The minimap markers are placed from the distance to the
     player in yards, the same way the exploration markers are (see Modules/Exploration.lua), and the minimap is looked at
-    ten times a second, only while it has something to move.
+    every frame, and a look where nothing moved costs only a few comparisons.
 ]]
 
 local Convergence = {
@@ -22,7 +22,7 @@ local WINDSHAPER_RACE_ID = 96      -- "Windshaper Skyborne" in the game's ChrRac
 local SKYSIGHT_SPELL_ID = 1259686  -- the racial that benefits from a convergence
 local ICON = (SN.config.icon:gsub("SuperNovaUI$", "Convergence")) -- Media/Icons/Convergence.tga: a small wind swirl
 local WORLD_PIN_SIZE, MINIMAP_PIN_SIZE = 13, 10
-local MINIMAP_STEP = 0.1
+local MINIMAP_STEP = 0 -- every frame, so the markers move smoothly with the minimap
 local MAP_EVENTS = { "ZONE_CHANGED_NEW_AREA", "ZONE_CHANGED", "ZONE_CHANGED_INDOORS", "PLAYER_ENTERING_WORLD", "SPELLS_CHANGED", "PLAYER_LOGIN", "ADDON_LOADED" }
 
 local function L(enUS, ptBR)
@@ -182,6 +182,29 @@ end
 
 -- ---- Minimap -----------------------------------------------------------------------------------------------------
 
+-- The zone's size in yards does not change while you are in it: read it once per zone.
+local zoneSizes = {}
+
+local function GetZoneSize(mapID)
+    local cached = zoneSizes[mapID]
+
+    if cached then
+        return cached[1], cached[2]
+    end
+
+    if C_Map.GetMapWorldSize then
+        local ok, wide, high = pcall(C_Map.GetMapWorldSize, mapID)
+        wide, high = ok and Plain(wide), ok and Plain(high)
+
+        if wide and high and wide > 0 then
+            zoneSizes[mapID] = { wide, high }
+            return wide, high
+        end
+    end
+
+    return nil, nil
+end
+
 local function GetMinimapRadius()
     if C_Minimap and C_Minimap.GetViewRadius then
         local ok, radius = pcall(C_Minimap.GetViewRadius)
@@ -210,6 +233,7 @@ function Convergence:UpdateMinimap()
     local minimap = _G.Minimap
 
     if not self.running or not minimap or not self:GetSetting("minimap") or not minimap:IsVisible() then
+        self.last = nil
         HidePins(self.minimapPins)
         return
     end
@@ -219,20 +243,17 @@ function Convergence:UpdateMinimap()
     local radius = GetMinimapRadius()
 
     if not list or not radius then
+        self.last = nil
         HidePins(self.minimapPins)
         return
     end
 
     local okPosition, position = pcall(C_Map.GetPlayerMapPosition, mapID, "player")
     local playerX, playerY = position and Plain(position.x), position and Plain(position.y)
-    local yardsWide, yardsHigh
-
-    if C_Map.GetMapWorldSize then
-        local okSize, wide, high = pcall(C_Map.GetMapWorldSize, mapID)
-        yardsWide, yardsHigh = okSize and Plain(wide), okSize and Plain(high)
-    end
+    local yardsWide, yardsHigh = GetZoneSize(mapID)
 
     if not (okPosition and playerX and playerY and yardsWide and yardsHigh and yardsWide > 0) then
+        self.last = nil
         HidePins(self.minimapPins)
         return
     end
@@ -242,6 +263,15 @@ function Convergence:UpdateMinimap()
     local square = shape == "SQUARE"
     local rotates = GetCVar and GetCVar("rotateMinimap") == "1"
     local facing = rotates and Plain(GetPlayerFacing and GetPlayerFacing()) or 0
+
+    -- nothing moved since the last look: the markers are already where they belong
+    local last = self.last
+
+    if last and last.map == mapID and last.x == playerX and last.y == playerY and last.facing == facing and last.radius == radius then
+        return
+    end
+
+    self.last = { map = mapID, x = playerX, y = playerY, facing = facing, radius = radius }
     local shown = 0
 
     for index = 1, CountPoints(list) do
@@ -283,6 +313,7 @@ function Convergence:UpdateTicker()
             self.ticker:SetScript("OnUpdate", nil)
         end
 
+        self.last = nil
         HidePins(self.minimapPins)
         return
     end
@@ -305,6 +336,7 @@ end
 -- ---- Life cycle --------------------------------------------------------------------------------------------------
 
 function Convergence:Refresh()
+    self.last = nil
     if self.running then
         self:HookWorldMap()
     end
